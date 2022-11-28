@@ -9,7 +9,8 @@ from typing import List
 
 import markdown
 import toml
-from jinja2 import Environment, FileSystemLoader, Markup, select_autoescape
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+import markupsafe
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 SITE_PATH = os.path.join(BASE_DIR, "site")
@@ -45,7 +46,10 @@ def load_config():
 def generate_posts(posts):
     for post in posts:
         template = env.get_template("post.html")
-        html = template.render(post=post, post_html=Markup(post.html))
+        html = template.render(
+            post=post,
+            post_html=markupsafe.Markup(post.html)
+        )
         path = os.path.join(SITE_PATH, post.filename)
         with open(path, "w") as f:
             f.write(html)
