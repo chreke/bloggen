@@ -44,8 +44,8 @@ def load_config():
 
 
 def generate_posts(posts):
+    template = env.get_template("post.html")
     for post in posts:
-        template = env.get_template("post.html")
         html = template.render(
             post=post,
             post_html=markupsafe.Markup(post.html)
