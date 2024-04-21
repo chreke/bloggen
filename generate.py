@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 from collections import defaultdict
 import datetime
-import os
 import shutil
+from pathlib import Path
 from dataclasses import dataclass
 from typing import List
 from urllib.parse import urljoin
@@ -12,20 +12,20 @@ import toml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import markupsafe
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-SITE_PATH = os.path.join(BASE_DIR, "site")
+BASE_DIR = Path(__file__).resolve().parent
+SITE_DIR = BASE_DIR / "site"
+POSTS_DIR = BASE_DIR / "posts"
+TAGS_DIR = BASE_DIR / "tags"
 CONFIG_FILE = "config.toml"
 FEED_FILENAME = "feed.rss"
 
 env = Environment(
-    loader=FileSystemLoader(os.path.join(BASE_DIR, "templates")),
+    loader=FileSystemLoader(BASE_DIR / "templates"),
     autoescape=select_autoescape(["html", "xml"]),
 )
 
-try:
-    os.makedirs(SITE_PATH)
-except FileExistsError:
-    pass
+def ensure_dir_exists(path):
+    path.mkdir(parents=True, exist_ok=True)
 
 
 @dataclass
@@ -50,7 +50,7 @@ def generate_posts(posts):
             post=post,
             post_html=markupsafe.Markup(post.html)
         )
-        path = os.path.join(SITE_PATH, post.filename)
+        path = SITE_DIR / post.filename
         with open(path, "w") as f:
             f.write(html)
 
@@ -63,7 +63,7 @@ def generate_index_page(config, posts):
         description=config["description"],
         posts=posts,
     )
-    filename = os.path.join(SITE_PATH, "index.html")
+    filename = SITE_DIR / "index.html"
     with open(filename, "w") as f:
         f.write(html)
 
@@ -76,18 +76,12 @@ def generate_feed(config, posts):
         self_url=feed_url(config),
         last_pub_date=posts[0].date,
     )
-    filename = os.path.join(SITE_PATH, FEED_FILENAME)
+    filename = SITE_DIR / FEED_FILENAME
     with open(filename, "w") as f:
         f.write(xml)
 
 
 def generate_tag_pages(config, posts):
-    tags_path = os.path.join(SITE_PATH, "tags")
-    try:
-        shutil.rmtree(tags_path)
-    except FileNotFoundError:
-        pass
-    os.makedirs(tags_path)
     tagged_posts = defaultdict(list)
     for post in posts:
         for tag in post.tags:
@@ -100,7 +94,7 @@ def generate_tag_pages(config, posts):
             feed_url=feed_url(config),
             posts=tagged_posts[tag],
         )
-        filename = os.path.join(tags_path, f"{tag}.html")
+        filename = TAGS_DIR / f"{tag}.html"
         with open(filename, "w") as f:
             f.write(html)
 
@@ -110,17 +104,14 @@ def feed_url(config):
 
 
 def copy_static_files():
-    static_src_path = os.path.join(BASE_DIR, "static")
-    static_dest_path = os.path.join(SITE_PATH, "static")
-    try:
-        shutil.rmtree(static_dest_path)
-    except FileNotFoundError:
-        pass
-    shutil.copytree(static_src_path, static_dest_path)
+    static_src_path = BASE_DIR / "static"
+    static_dest_path = SITE_DIR / "static"
+    shutil.copytree(static_src_path, static_dest_path, dirs_exist_ok=True)
 
 
 def parse_markdown():
-    for post in os.listdir(os.path.join(BASE_DIR, "posts")):
+    posts_dir = BASE_DIR / "posts"
+    for post_file in posts_dir.iterdir():
         md = markdown.Markdown(
             extensions=[
                 "meta",
@@ -130,9 +121,9 @@ def parse_markdown():
                 "toc",
             ]
         )
-        with open(os.path.join(BASE_DIR, "posts", post), "r") as f:
+        with open(posts_dir / post_file, "r") as f:
             post_html = md.convert(f.read())
-        filename = os.path.splitext(os.path.basename(post))[0] + ".html"
+        filename = post_file.stem + ".html"
         # pylint: disable=no-member
         description = (
             "".join(md.Meta["description"])
@@ -163,6 +154,8 @@ def generate():
     print("Loading configuration")
     config = load_config()
     print("Generating posts...")
+    for d in (SITE_DIR, POSTS_DIR, TAGS_DIR):
+        ensure_dir_exists(d)
     posts = list(parse_markdown())
     posts.sort(key=lambda x: x.date, reverse=True)
     generate_posts(posts)
