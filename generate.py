@@ -3,9 +3,9 @@ from collections import defaultdict
 import datetime
 import os
 import shutil
-import urllib
 from dataclasses import dataclass
 from typing import List
+from urllib.parse import urljoin
 
 import markdown
 import toml
@@ -106,7 +106,7 @@ def generate_tag_pages(config, posts):
 
 
 def feed_url(config):
-    return urllib.parse.urljoin(config["url"], "feed.rss")
+    return urljoin(config["url"], "feed.rss")
 
 
 def copy_static_files():
