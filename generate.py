@@ -24,6 +24,7 @@ env = Environment(
     autoescape=select_autoescape(["html", "xml"]),
 )
 
+
 def ensure_dir_exists(path):
     path.mkdir(parents=True, exist_ok=True)
 
@@ -46,10 +47,7 @@ def load_config():
 def generate_posts(posts):
     template = env.get_template("post.html")
     for post in posts:
-        html = template.render(
-            post=post,
-            post_html=markupsafe.Markup(post.html)
-        )
+        html = template.render(post=post, post_html=markupsafe.Markup(post.html))
         path = SITE_DIR / post.filename
         with open(path, "w") as f:
             f.write(html)
@@ -126,9 +124,7 @@ def parse_markdown():
         filename = post_file.stem + ".html"
         # pylint: disable=no-member
         description = (
-            "".join(md.Meta["description"])
-            if "description" in md.Meta
-            else None
+            "".join(md.Meta["description"]) if "description" in md.Meta else None
         )
         yield Post(
             date=to_rfc_3339(md.Meta["date"][0]),
