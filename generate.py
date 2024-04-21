@@ -1,16 +1,16 @@
 #!/usr/bin/env python
-from collections import defaultdict
 import datetime
 import shutil
-from pathlib import Path
+from collections import defaultdict
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List
 from urllib.parse import urljoin
 
 import markdown
+import markupsafe
 import toml
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-import markupsafe
 
 BASE_DIR = Path(__file__).resolve().parent
 SITE_DIR = BASE_DIR / "site"
