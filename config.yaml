@@ -1,0 +1,14 @@
+site:
+  title: My Blog
+  author: John Doe
+  url: https://blog.johndoe.com
+  description: This is the blog of John Doe, mighty pirate
+posts:
+  - published_at: 2024-04-26 14:00
+    title: Welcome to my blog!
+    description: >-
+      An example blog post that demonstrates the features of bloggen, such as
+      markup and syntax highlighting.
+    source: welcome.md
+    tags:
+      - welcome
