@@ -11,4 +11,5 @@ posts:
       markup and syntax highlighting.
     source: welcome.md
     tags:
-      - welcome
+      - about
+      - meta

@@ -14,8 +14,7 @@
     {% if post.tags %}
         <p>Tagged in
             {% for tag in post.tags %}
-                <a href="/tags/{{tag}}.html">{{tag}}</a>
-                {{ ", " if not loop.last }}
+                <a href="/tags/{{tag}}.html">{{tag}}</a>{{ "," if not loop.last }}
             {% endfor %}
         </p>
     {% endif %}
