@@ -10,6 +10,7 @@
 	{{ post_html }}
 {% endblock %}
 {% block footer %}
+    <hr />
     {% if post.tags %}
         <p>Tagged in
             {% for tag in post.tags %}
