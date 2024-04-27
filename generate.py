@@ -30,7 +30,15 @@ def load_config():
     with open("config.yaml") as f:
         config = yaml.load(f, yaml.Loader)
     for post in config["posts"]:
-        post["published_at"] = datetime.datetime.fromisoformat(post["published_at"])
+        published_at = post["published_at"]
+        if isinstance(published_at, datetime.date):
+            published_at = datetime.datetime(
+                published_at.year,
+                published_at.month,
+                published_at.day)
+        assert isinstance(published_at, datetime.datetime), \
+            f"{published_at} is not a date or datetime"
+        post["published_at"] = published_at
         post["filename"] = Path(post["source"]).stem + ".html"
         post["url"] = "/posts/" + post["filename"]
         post["tags"] = [t.strip() for t in post.get("tags", [])]
