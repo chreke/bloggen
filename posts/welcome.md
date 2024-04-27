@@ -22,6 +22,8 @@ Here is some *emphasized text*
 
 Here is some text _with a different emphasis_
 
+Here is **some bold text**
+
 Here is a block quote:
 
 > Any quote seems sensible if you attribute it to Albert Einstein
