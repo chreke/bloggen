@@ -15,7 +15,6 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 BASE_DIR = Path(__file__).resolve().parent
 SITE_DIR = BASE_DIR / "site"
 POSTS_DIR = BASE_DIR / "posts"
-TAGS_DIR = BASE_DIR / "tags"
 CONFIG_FILE = "config.toml"
 FEED_FILENAME = "feed.rss"
 
@@ -92,7 +91,9 @@ def generate_tag_pages(config, posts):
             feed_url=feed_url(config),
             posts=tagged_posts[tag],
         )
-        filename = TAGS_DIR / f"{tag}.html"
+        tags_dir = SITE_DIR / "tags"
+        ensure_dir_exists(tags_dir)
+        filename = tags_dir / f"{tag}.html"
         with open(filename, "w") as f:
             f.write(html)
 
@@ -150,7 +151,7 @@ def generate():
     print("Loading configuration")
     config = load_config()
     print("Generating posts...")
-    for d in (SITE_DIR, POSTS_DIR, TAGS_DIR):
+    for d in (SITE_DIR, POSTS_DIR):
         ensure_dir_exists(d)
     posts = list(parse_markdown())
     posts.sort(key=lambda x: x.date, reverse=True)
