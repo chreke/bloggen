@@ -30,4 +30,6 @@ Here is a photo of an alpaca by Xandro Vandewalle:
 
 ![](/static/images/alpaca.jpeg)
 
-https://unsplash.com/photos/uArsojHSNFc
+<!-- This is an example of automatic linking: -->
+
+<https://unsplash.com/photos/uArsojHSNFc/>
