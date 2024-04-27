@@ -19,5 +19,5 @@
         </p>
     {% endif %}
     <a href="/">&laquo; Go back</a>
-    <p>Written on {{ post.published_at }}</p>
+    <p>Written on {{ post.published_at.strftime("%a %d %b %Y") }}</p>
 {% endblock %}
