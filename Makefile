@@ -1,7 +1,4 @@
-.PHONY: install all
-
-all:
-	python generate.py
+.PHONY: install
 
 install: dev-requirements.txt requirements.txt
 	pip-sync requirements.txt dev-requirements.txt
